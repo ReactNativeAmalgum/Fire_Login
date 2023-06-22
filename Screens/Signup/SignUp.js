@@ -9,38 +9,30 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+import Addgif from './Addgif';
+import {Fb, Google, LinkedIn} from './LogoBtn';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
   listenOrientationChange as lor,
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
-import Addgif from './Addgif';
+import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 
-export default function SignUp() {
+export default function SignUp({navigation}) {
+ 
   return (
+    <KeyboardAwareScrollView >
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
-        <View
-          style={{
-            marginVertical: hp('10%'),
-            borderRadius: 160,
-            backgroundColor: 'green',
-            position: 'absolute',
-          }}>
+
+        <View style={styles.gif}>
           <Addgif />
         </View>
-        <Text
-          style={{
-            marginVertical: hp('27%'),
-            fontSize: 24,
-            fontWeight: 'bold',
-            color: 'black',
-            position: 'absolute',
-          }}>
-          Welcome Back
-        </Text>
+        <Text style={styles.welcome}>Welcome Back</Text>
         <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
           <TextInput
             placeholder="Email address"
@@ -51,85 +43,35 @@ export default function SignUp() {
             style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
           />
           <Text
-            style={{
-              marginVertical: hp('18%'),
-              left: 200,
-              fontWeight: 'bold',
-              position: 'absolute',
-              color: 'black',
-            }}
-            onPress={() => Alert.alert('Forget Password')}>
+            style={styles.forgetTxt}
+            onPress={() =>navigation.navigate(navigationStrings.FORGOTPASSWORD)}>
             Forget password?
           </Text>
         </View>
         <TouchableOpacity
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#7D3CFF',
-            borderRadius: 75,
-            marginVertical: hp('65%'),
-            width: wp('75%'),
-            padding: 10,
-            position: 'absolute',
-          }}
-          onPress={() => Alert.alert('This is a sign up button')}>
-          <Text style={{fontSize: 24, fontWeight: '900', color: 'black'}}>
-            Sign Up
-          </Text>
+          style={styles.signUpbtnDir}
+          onPress={() =>  navigation.navigate(navigationStrings.LOGIN)}>
+          <Text style={styles.SignUpBtnTxt}>Sign Up</Text>
         </TouchableOpacity>
         <Text
-          style={{
-            marginVertical: hp('74%'),
-            color: 'black',
-            position: 'absolute',
-          }}>
+          style={styles.AlAcc}>
           Already have an account?{' '}
           <Text
-            onPress={() => Alert.alert('Go to login page')}
-            style={{fontWeight: '900', color: 'black'}}>
+            onPress={() => navigation.navigate(navigationStrings.LOGIN)}
+            style={styles.login}>
             Login
           </Text>
         </Text>
-        <View
-          style={{
-            borderWidth: 0.2,
-            width: wp('75%'),
-            marginVertical: hp('78%'),
-          }}
-        />
+        <View style={styles.logoPos} />
         {/* logo desiginin part */}
-        <View style={{marginVertical: hp('80%'), position: 'absolute',flexDirection:'row',flexWrap:'wrap', justifyContent:'space-between'}}>
-          <TouchableOpacity
-            onPress={() => Alert.alert('FB Login')}
-
-            style={[
-              styles.logoCircle,
-              {alignItems: 'center', justifyContent: 'center'},
-            ]}>
-            <Image source={require('../../Components/Assets/Images/fb.png')} />
-          </TouchableOpacity>
-          <TouchableOpacity
-          onPress={() => Alert.alert('Go to login page')}
-
-          style={[
-            styles.logoCircle,
-            {alignItems: 'center', justifyContent: 'center'},
-          ]}>
-          <Image source={require('../../Components/Assets/Images/g.png')} />
-        </TouchableOpacity>
-        <TouchableOpacity
-        onPress={() => Alert.alert('Go to login page')}
-
-        style={[
-          styles.logoCircle,
-          {alignItems: 'center', justifyContent: 'center'},
-        ]}>
-       <Image style={styles.logoCircle} source={require('../../Components/Assets/Images/link.png')}/>
-      </TouchableOpacity>
+        <View style={styles.logoDirection}>
+          <Fb />
+          <Google />
+          <LinkedIn />
+          </View>
         </View>
-      </View>
     </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -138,6 +80,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     backgroundColor: '#FFFFFF',
+    // width: wp('100%'),
+    height:hp('100%')
     // padding:16
   },
   circle: {
@@ -156,13 +100,60 @@ const styles = StyleSheet.create({
     marginVertical: hp('40%'),
     position: 'absolute',
   },
-  logoCircle: {
-    width: wp('15%'),
-    height: hp('7%'),
-    borderRadius: 100,
-    padding:10,
-    margin:10,
-    justifyContent:'space-between',
-    backgroundColor: '#ffff',
+  logoPos: {
+    borderWidth: 0.2,
+    width: wp('75%'),
+    marginVertical: hp('78%'),
   },
+  logoDirection: {
+    marginVertical: hp('80%'),
+    position: 'absolute',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  signUpbtnDir: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#7D3CFF',
+    borderRadius: 75,
+    marginVertical: hp('65%'),
+    width: wp('75%'),
+    padding: 10,
+    position: 'absolute',
+  },
+  SignUpBtnTxt: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: 'black',
+  },
+  forgetTxt: {
+    marginVertical: hp('18%'),
+    left: 200,
+    fontWeight: 'bold',
+    position: 'absolute',
+    color: 'black',
+  },
+  welcome: {
+    marginVertical: hp('27%'),
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
+    position: 'absolute',
+  },
+  gif: {
+    alignItems: 'center',
+    marginVertical: hp('10%'),
+    // borderRadius: 160,
+    backgroundColor: 'green',
+    position: 'absolute',
+  },
+  AlAcc:{
+    marginVertical: hp('74%'),
+    color: 'black',
+    position: 'absolute',
+  },
+  login:{
+    fontWeight: '900', color: 'black'
+  }
 });

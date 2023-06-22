@@ -18,8 +18,11 @@ export default function Addgif() {
 
 const styles = StyleSheet.create({
   circle: {
-    width: wp('26%'),
-    height: hp('13%'),
+    position:'absolute',
+    // width: wp('30%'),
+    // height: hp('14.5%'),
+    width:120,
+    height:120,
     borderRadius: 100,
     backgroundColor: 'yellow',
   },
