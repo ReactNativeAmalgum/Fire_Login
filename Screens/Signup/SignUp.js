@@ -101,20 +101,13 @@ export default function SignUp() {
         {/* logo desiginin part */}
         <View style={{marginVertical: hp('80%'), position: 'absolute',flexDirection:'row',flexWrap:'wrap', justifyContent:'space-between'}}>
           <TouchableOpacity
-            onPress={() => Alert.alert('Go to login page')}
+            onPress={() => Alert.alert('FB Login')}
 
             style={[
               styles.logoCircle,
               {alignItems: 'center', justifyContent: 'center'},
             ]}>
-            <Text
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 24,
-              }}>
-              F
-            </Text>
+            <Image source={require('../../Components/Assets/Images/fb.png')} />
           </TouchableOpacity>
           <TouchableOpacity
           onPress={() => Alert.alert('Go to login page')}
@@ -123,14 +116,7 @@ export default function SignUp() {
             styles.logoCircle,
             {alignItems: 'center', justifyContent: 'center'},
           ]}>
-          <Text
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 24,
-            }}>
-            F
-          </Text>
+          <Image source={require('../../Components/Assets/Images/g.png')} />
         </TouchableOpacity>
         <TouchableOpacity
         onPress={() => Alert.alert('Go to login page')}
@@ -139,14 +125,7 @@ export default function SignUp() {
           styles.logoCircle,
           {alignItems: 'center', justifyContent: 'center'},
         ]}>
-        <Text
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 24,
-          }}>
-          F
-        </Text>
+       <Image style={styles.logoCircle} source={require('../../Components/Assets/Images/link.png')}/>
       </TouchableOpacity>
         </View>
       </View>
@@ -184,6 +163,6 @@ const styles = StyleSheet.create({
     padding:10,
     margin:10,
     justifyContent:'space-between',
-    backgroundColor: 'pink',
+    backgroundColor: '#ffff',
   },
 });
