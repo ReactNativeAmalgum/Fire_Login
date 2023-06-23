@@ -11,7 +11,7 @@ export default function Addgif() {
 
       <Image
         style={[styles.circle,]}
-        source={require('../../Components/Assets/Images/moon.gif')}
+        source={require('../../../Components/Assets/Images/moon.gif')}
       />
   );
 }
