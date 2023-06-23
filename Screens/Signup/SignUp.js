@@ -9,11 +9,9 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import Addgif from './Addgif';
-import {Fb, Google, LinkedIn} from './LogoBtn';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -21,56 +19,60 @@ import {
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
+import { Fb, Google, LinkedIn } from './LogoBtn';
 
 export default function SignUp({navigation}) {
- 
   return (
-    <KeyboardAwareScrollView >
-    <SafeAreaView style={{flex: 1}}>
-      <View style={styles.container}>
-
-        <View style={styles.gif}>
-          <Addgif />
-        </View>
-        <Text style={styles.welcome}>Welcome Back</Text>
-        <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
-          <TextInput
-            placeholder="Email address"
-            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-          />
-          <TextInput
-            placeholder="Password"
-            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-          />
-          <Text
-            style={styles.forgetTxt}
-            onPress={() =>navigation.navigate(navigationStrings.FORGOTPASSWORD)}>
-            Forget password?
+    <KeyboardAwareScrollView>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          <Text style={styles.welcome}>Register</Text>
+          <Text style={styles.Ca}>Create your new account</Text>
+          <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
+            <TextInput
+              placeholder="Full Name"
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <TextInput
+              placeholder="Email address"
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <TextInput
+              placeholder="Password"
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <TextInput
+              placeholder="Confirm Password"
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <Text
+            style={styles.forgetTxt}>
+            By signing up you’ve agree to <Text style={styles.services}>Our Terms of 
+            Use And Privacy Notice</Text>
           </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.signUpbtnDir}
-          onPress={() =>  navigation.navigate(navigationStrings.LOGIN)}>
-          <Text style={styles.SignUpBtnTxt}>Sign Up</Text>
-        </TouchableOpacity>
-        <Text
-          style={styles.AlAcc}>
-          Already have an account?{' '}
-          <Text
-            onPress={() => navigation.navigate(navigationStrings.LOGIN)}
-            style={styles.login}>
-            Login
+          </View>
+          <TouchableOpacity
+            style={styles.signUpbtnDir}
+            onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
+            <Text style={styles.SignUpBtnTxt}>Sign Up</Text>
+          </TouchableOpacity>
+          <Text style={styles.AlAcc}>
+            Already have an account?{' '}
+            <Text
+              onPress={() => navigation.navigate(navigationStrings.LOGIN)}
+              style={styles.login}>
+              Login
+            </Text>
           </Text>
-        </Text>
-        <View style={styles.logoPos} />
-        {/* logo desiginin part */}
-        <View style={styles.logoDirection}>
-          <Fb />
-          <Google />
-          <LinkedIn />
+          <View style={styles.logoPos} />
+          {/* logo desiginin part */}
+          <View style={styles.logoDirection}>
+            <Fb />
+            <Google />
+            <LinkedIn />
           </View>
         </View>
-    </SafeAreaView>
+      </SafeAreaView>
     </KeyboardAwareScrollView>
   );
 }
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     // width: wp('100%'),
-    height:hp('100%')
+    height: hp('100%'),
     // padding:16
   },
   circle: {
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
     borderColor: '#F0F0F0',
   },
   inputStyle: {
-    marginVertical: hp('40%'),
+    marginVertical: hp('23'),
     position: 'absolute',
   },
   logoPos: {
@@ -123,20 +125,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   SignUpBtnTxt: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '900',
     color: 'black',
   },
   forgetTxt: {
-    marginVertical: hp('18%'),
-    left: 200,
+    marginVertical: hp('35.5%'),
+    right:wp('1'),
+justifyContent:'center',
+alignItems:'center',
+alignContent:'center',
+    width:wp('75%'),
     fontWeight: 'bold',
     position: 'absolute',
-    color: 'black',
+    // color: 'black',
+  },
+  services:{
+    color:'black'
   },
   welcome: {
-    marginVertical: hp('27%'),
-    fontSize: 24,
+    marginVertical: hp('13%'),
+    fontSize: 25,
     fontWeight: 'bold',
     color: 'black',
     position: 'absolute',
@@ -148,12 +157,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     position: 'absolute',
   },
-  AlAcc:{
+  AlAcc: {
     marginVertical: hp('74%'),
     color: 'black',
     position: 'absolute',
   },
-  login:{
-    fontWeight: '900', color: 'black'
+  login: {
+    fontWeight: '900',
+    color: 'black',
+  },
+  Ca:{
+    marginVertical:hp('20%'),
+    position:'absolute'
   }
 });
