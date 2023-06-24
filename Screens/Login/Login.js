@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,57 +20,56 @@ import {
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import { Fb, Google, LinkedIn } from '../../Components/Assets/Reg Comps/LogoBtn';
+import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 
 export default function SignUp({navigation}) {
- 
   return (
-    <KeyboardAwareScrollView >
-    <SafeAreaView style={{flex: 1}}>
-      <View style={styles.container}>
-
-        <View style={styles.gif}>
-          <Addgif />
-        </View>
-        <Text style={styles.welcome}>Welcome Back</Text>
-        <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
-          <TextInput
-            placeholder="Email address"
-            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-          />
-          <TextInput
-            placeholder="Password"
-            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-          />
-          <Text
-            style={styles.forgetTxt}
-            onPress={() =>navigation.navigate(navigationStrings.FORGOTPASSWORD)}>
-            Forget password?
+    <KeyboardAwareScrollView>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          <View style={styles.gif}>
+            <Addgif />
+          </View>
+          <Text style={styles.welcome}>Welcome Back</Text>
+          <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
+            <TextInput
+              placeholder="Email address"
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <TextInput
+              placeholder="Password"
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <Text
+              style={styles.forgetTxt}
+              onPress={() =>
+                navigation.navigate(navigationStrings.FORGOTPASSWORD)
+              }>
+              Forget password?
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.signUpbtnDir}
+            onPress={() => navigation.navigate(navigationStrings.WELCOME)}>
+            <Text style={styles.SignUpBtnTxt}>Login</Text>
+          </TouchableOpacity>
+          <Text style={styles.AlAcc}>
+            Don't have an account?{' '}
+            <Text
+              onPress={() => navigation.navigate(navigationStrings.SIGNUP)}
+              style={styles.login}>
+              Register
+            </Text>
           </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.signUpbtnDir}
-          onPress={() =>  navigation.navigate(navigationStrings.LOGIN)}>
-          <Text style={styles.SignUpBtnTxt}>Login</Text>
-        </TouchableOpacity>
-        <Text
-          style={styles.AlAcc}>
-          Don't have an account?{' '}
-          <Text
-            onPress={() => navigation.navigate(navigationStrings.SIGNUP)}
-            style={styles.login}>
-            Register
-          </Text>
-        </Text>
-        <View style={styles.logoPos} />
-        {/* logo desiginin part */}
-        <View style={styles.logoDirection}>
-          <Fb />
-          <Google />
-          <LinkedIn />
+          <View style={styles.logoPos} />
+          {/* logo desiginin part */}
+          <View style={styles.logoDirection}>
+            <Fb />
+            <Google />
+            <LinkedIn />
           </View>
         </View>
-    </SafeAreaView>
+      </SafeAreaView>
     </KeyboardAwareScrollView>
   );
 }
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     // width: wp('100%'),
-    height:hp('100%')
+    height: hp('100%'),
     // padding:16
   },
   circle: {
@@ -148,12 +147,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     position: 'absolute',
   },
-  AlAcc:{
+  AlAcc: {
     marginVertical: hp('74%'),
     color: 'black',
     position: 'absolute',
   },
-  login:{
-    fontWeight: '900', color: 'black'
-  }
+  login: {
+    fontWeight: '900',
+    color: 'black',
+  },
 });
