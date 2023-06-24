@@ -15,13 +15,13 @@ import {
 } from 'react-native-responsive-screen-hooks';
 
 export default function Welcome() {
-  const logOut = async () => {
-    try {
-      await firebase.auth.signOut();
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const logOut = async () => {
+  //   try {
+  //     await firebase.auth.signOut();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
   return (
     <View style={styles.container}>
       <ImageBackground
