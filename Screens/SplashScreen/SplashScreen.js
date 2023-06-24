@@ -8,7 +8,10 @@ import {
   Image,
 } from "react-native";
 import navigationStrings from "../../Components/Navigation/NavigationStrings/navigationStrings";
-
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+const auth = getAuth(
+  
+)
 export default function SplashScreen({navigation}) {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
@@ -20,7 +23,7 @@ export default function SplashScreen({navigation}) {
       // If not then send for Authentication
       // else send to Home Screen
       navigation.replace(
-        auth().currentUser ? navigationStrings.WELCOME : navigationStrings.AUTH
+        auth().currentUser ? navigation.navigate(navigationStrings.WELCOME) : navigation.navigate(navigationStrings.AUTH)
       );
     }, 5000);
   }, []);
