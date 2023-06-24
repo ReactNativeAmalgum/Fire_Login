@@ -2,5 +2,7 @@ export default {
     'SIGNUP': 'SignUp',
     'LOGIN':'Login',
     'FORGOTPASSWORD':'ForgotPass',
-    'WELCOME':'Welcome'
+    'WELCOME':'Welcome',
+    'AUTH':'Auth',
+    'SPLASHSCREEN':'SplashScreen'
 }
