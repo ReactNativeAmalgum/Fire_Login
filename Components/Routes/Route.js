@@ -3,7 +3,7 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native'
 import navigationStrings from '../Navigation/NavigationStrings/navigationStrings'
-import { ForgotPass, Login, SignUp } from '../../Screens'
+import { ForgotPass, Login, SignUp, Welcome } from '../../Screens'
 
 
 const Stack = createNativeStackNavigator();
@@ -15,6 +15,7 @@ export default function Route() {
         <Stack.Screen name ={navigationStrings.SIGNUP} component={SignUp} />
             <Stack.Screen name= {navigationStrings.LOGIN} component={Login} />
             <Stack.Screen name= {navigationStrings.FORGOTPASSWORD} component={ForgotPass} />
+            <Stack.Screen name= {navigationStrings.WELCOME} component={Welcome} />
 
             </Stack.Navigator>
     </NavigationContainer>

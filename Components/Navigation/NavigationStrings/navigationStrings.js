@@ -1,5 +1,6 @@
 export default {
     'SIGNUP': 'SignUp',
     'LOGIN':'Login',
-    'FORGOTPASSWORD':'ForgotPass'
+    'FORGOTPASSWORD':'ForgotPass',
+    'WELCOME':'Welcome'
 }
