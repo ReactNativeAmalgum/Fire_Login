@@ -22,7 +22,18 @@ import navigationStrings from '../../Components/Navigation/NavigationStrings/nav
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
 import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 
+import {firebase} from '../../src/config/firebase'
+
 export default function SignUp({navigation}) {
+  const [email, setEmail] = React.useState('')
+  const [password, setPassowrd] = React.useState('')
+  const loginUser = async (email, password) =>{
+    try{
+      await firebase.auth().signInWithEmailAndPassword(email, password)
+    } catch(error){
+      Alert(error.message)
+    }
+  }
   return (
     <KeyboardAwareScrollView>
       <SafeAreaView style={{flex: 1}}>
@@ -35,10 +46,17 @@ export default function SignUp({navigation}) {
             <TextInput
               placeholder="Email address"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+              onChangeText={(email) => setEmail(email)}
+              autoCapitalize='none'
+              autoCorrect={false}
             />
             <TextInput
               placeholder="Password"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+              onChangeText={(password) => setPassowrd(password)}
+              autoCapitalize='none'
+              autoCorrect={false}
+              secureTextEntry={true}
             />
             <Text
               style={styles.forgetTxt}
@@ -50,7 +68,7 @@ export default function SignUp({navigation}) {
           </View>
           <TouchableOpacity
             style={styles.signUpbtnDir}
-            onPress={() => navigation.navigate(navigationStrings.WELCOME)}>
+            onPress={() => navigation.navigate(navigationStrings.SIGNUP)}>
             <Text style={styles.SignUpBtnTxt}>Login</Text>
           </TouchableOpacity>
           <Text style={styles.AlAcc}>
