@@ -8,7 +8,6 @@ import {
   Image,
 } from "react-native";
 
-import auth from 'firebase/Auth'
 export default function SplashScreen({navigation}) {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
