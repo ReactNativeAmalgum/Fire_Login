@@ -46,7 +46,12 @@ export default function SignUp({navigation}) {
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <Text
+
             style={styles.forgetTxt}>
+            onPress={() =>
+              navigation.navigate(navigationStrings.FORGOTPASSWORD)
+            }>
+
             By signing up you’ve agree to <Text style={styles.services}>Our Terms of 
             Use And Privacy Notice</Text>
           </Text>

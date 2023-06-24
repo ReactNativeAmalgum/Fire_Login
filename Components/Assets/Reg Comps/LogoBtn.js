@@ -15,7 +15,7 @@ export const Fb = () =>{
       styles.logoCircle,
       {alignItems: 'center', justifyContent: 'center'},
     ]}>
-    <Image source={require('../../Components/Assets/Images/fb.png')} />
+    <Image source={require('../../../Components/Assets/Images/fb.png')} />
   </TouchableOpacity>
    )
 }
@@ -28,7 +28,7 @@ export const Google= () =>{
           styles.logoCircle,
           {alignItems: 'center', justifyContent: 'center'},
         ]}>
-        <Image source={require('../../Components/Assets/Images/g.png')} />
+        <Image source={require('../../../Components/Assets/Images/g.png')} />
       </TouchableOpacity>
     )
  }
@@ -41,7 +41,7 @@ export const Google= () =>{
           styles.logoCircle,
           {alignItems: 'center', justifyContent: 'center'},
         ]}>
-       <Image style={styles.logoCircle} source={require('../../Components/Assets/Images/link.png')}/>
+       <Image style={styles.logoCircle} source={require('../../../Components/Assets/Images/link.png')}/>
       </TouchableOpacity>
     )
  }
