@@ -4,14 +4,14 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native'
 import navigationStrings from '../Navigation/NavigationStrings/navigationStrings'
-import { ForgotPass, Login, SignUp, Welcome } from '../../Screens'
+import { ForgotPass, Login, SignUp, SplashScreen, Welcome } from '../../Screens'
 
 const Stack = createNativeStackNavigator();
 
 const Auth = () =>{
   return(
     <Stack.Navigator screenOptions={{headerShown:false}}>
-    <Stack.Screen name= {navigationStrings.SPLASHSCREEN} component={Splash} />
+    <Stack.Screen name= {navigationStrings.SPLASHSCREEN} component={SplashScreen} />
 
     <Stack.Screen name ={navigationStrings.SIGNUP} component={SignUp} />
     <Stack.Screen name= {navigationStrings.LOGIN} component={Login} />
