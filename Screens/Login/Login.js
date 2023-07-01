@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
@@ -21,18 +20,42 @@ import {
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
 import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
+import auth from "@react-native-firebase/auth";
 
-import {firebase} from '../../src/config/firebase'
 
 export default function SignUp({navigation}) {
-  const [email, setEmail] = React.useState('')
-  const [password, setPassowrd] = React.useState('')
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [errortext, setErrortext] = useState("");
   const loginUser = async (email, password) =>{
-    try{
-      await firebase.auth().signInWithEmailAndPassword(email, password)
-    } catch(error){
-      Alert(error.message)
+    setErrortext("");
+    if (!userEmail) {
+      alert("Please fill Email");
+      return;
     }
+    if (!userPassword) {
+      alert("Please fill Password");
+      return;
+    }
+    auth()
+      .signInWithEmailAndPassword(userEmail, userPassword)
+      .then((user) => {
+        console.log(user);
+        // If server response message same as Data Matched
+        if (user) navigation.navigate(navigationStrings.WELCOME);
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.code === "auth/invalid-email")
+          setErrortext(error.message);
+        else if (error.code === "auth/user-not-found")
+          setErrortext("No User Found");
+        else {
+          setErrortext(
+            "Please check your email id or password"
+          );
+        }
+      });
   }
   return (
     <KeyboardAwareScrollView>
@@ -46,14 +69,14 @@ export default function SignUp({navigation}) {
             <TextInput
               placeholder="Email address"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              onChangeText={(email) => setEmail(email)}
+              onChangeText={(userEmail) => setUserEmail(userEmail)}
               autoCapitalize='none'
               autoCorrect={false}
             />
             <TextInput
               placeholder="Password"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              onChangeText={(password) => setPassowrd(password)}
+              onChangeText={(userPassword) => setUserPassword(userPassword)}
               autoCapitalize='none'
               autoCorrect={false}
               secureTextEntry={true}
@@ -66,11 +89,21 @@ export default function SignUp({navigation}) {
               Forget password?
             </Text>
           </View>
+         <View>
+         {errortext != "" ? (
+          <Text style={styles.errorTextStyle}>
+            {" "}
+            {errortext}{" "}
+          </Text>
+        ) : null}
+         </View>
+
           <TouchableOpacity
             style={styles.signUpbtnDir}
-            onPress={() => navigation.navigate(navigationStrings.SIGNUP)}>
+            onPress={loginUser}>
             <Text style={styles.SignUpBtnTxt}>Login</Text>
           </TouchableOpacity>
+
           <Text style={styles.AlAcc}>
             Don't have an account?{' '}
             <Text
@@ -100,6 +133,11 @@ const styles = StyleSheet.create({
     // width: wp('100%'),
     height: hp('100%'),
     // padding:16
+  },
+  errorTextStyle: {
+    color: "red",
+    textAlign: "center",
+    fontSize: 14,
   },
   circle: {
     width: wp('25%'),

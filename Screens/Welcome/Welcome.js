@@ -3,32 +3,69 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Alert,
   ImageBackground,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
   listenOrientationChange as lor,
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
+import auth from "@react-native-firebase/auth";
+import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
+import { signOut } from '@firebase/auth';
 
-export default function Welcome() {
-  // const logOut = async () => {
-  //   try {
-  //     await firebase.auth.signOut();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+export default function Welcome({navigation}) {
+  const [user, setUser] = useState(' ')
+  const logout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure? You want to logout?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            return null;
+          },
+        },
+        {
+          text: "Confirm",
+          onPress: () => {
+            auth()
+              .signOut()
+              .then(() => navigation.replace("Auth"))
+              .catch((error) => {
+                console.log(error);
+                if (error.code === "auth/no-current-user")
+                  navigation.replace("Auth");
+                else alert(error);
+              });
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  useEffect(() =>{
+    const sub = auth().onAuthStateChanged((user)=>{
+      console.log("user", JSON.stringify(user))
+      setUser(user)
+    })
+    return sub;
+  })
   return (
     <View style={styles.container}>
       <ImageBackground
         style={styles.bgImage}
         resizeMode="cover"
         source={require('../../Components/Assets/Images/bg.png')}>
-        <TouchableOpacity style={{left: wp('80%')}}>
+        <TouchableOpacity style={{left: wp('80%')}}
+          onPress={logout}
+        >
           <Image
             style={styles.logOut}
             source={require('../../Components/Assets/Images/logOut.png')}
@@ -39,8 +76,8 @@ export default function Welcome() {
           source={require('../../Components/Assets/Images/wlcmBg.jpg')}
           style={styles.tmpView}>
           <View style={styles.dispData}>
-            <Text style={styles.dataFont}>Your name: </Text>
-            <Text style={styles.dataFont}>Your email address:</Text>
+            <Text style={styles.dataFont}>{user.displayName} </Text>
+            <Text style={styles.dataFont}>{user.email}</Text>
           </View>
         </ImageBackground>
       </ImageBackground>
@@ -95,8 +132,8 @@ const styles = StyleSheet.create({
   },
   dispData: {
     justifyContent: 'center',
-    marginVertical: hp('20%'),
-    alignItems: 'center',
+    marginVertical: hp('7%'),
+    // alignItems: 'center',
   },
   dataFont: {
     fontSize: 24,

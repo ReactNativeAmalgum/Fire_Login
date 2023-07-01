@@ -4,5 +4,6 @@ export default {
     'FORGOTPASSWORD':'ForgotPass',
     'WELCOME':'Welcome',
     'AUTH':'Auth',
-    'SPLASHSCREEN':'SplashScreen'
+    'SPLASHSCREEN':'SplashScreen',
+    "ROUTE": 'Route'
 }

@@ -9,9 +9,8 @@ import {
 } from "react-native";
 import navigationStrings from "../../Components/Navigation/NavigationStrings/navigationStrings";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-const auth = getAuth(
-  
-)
+
+import auth from "@react-native-firebase/auth";
 export default function SplashScreen({navigation}) {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
@@ -22,9 +21,9 @@ export default function SplashScreen({navigation}) {
       // Check if currentUser is set or not
       // If not then send for Authentication
       // else send to Home Screen
-      navigation.replace(
+
         auth().currentUser ? navigation.navigate(navigationStrings.WELCOME) : navigation.navigate(navigationStrings.AUTH)
-      );
+
     }, 5000);
   }, []);
 
@@ -48,24 +47,6 @@ export default function SplashScreen({navigation}) {
           style={styles.activityIndicator}
         />
       </View>
-      <Text
-        style={{
-          fontSize: 18,
-          textAlign: "center",
-          color: "white",
-        }}
-      >
-        React Native Firebase Authentication
-      </Text>
-      <Text
-        style={{
-          fontSize: 16,
-          textAlign: "center",
-          color: "white",
-        }}
-      >
-        www.aboutreact.com
-      </Text>
     </SafeAreaView>
   );
 }

@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
-import Addgif from '../../Components/Assets/Reg Comps/Addgif';
 import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -21,8 +20,56 @@ import {
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
+import auth from '@react-native-firebase/auth'
 
 export default function SignUp({navigation}) {
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [errortext, setErrortext] = useState("");
+  const [confPass, setConfPass] = useState('')
+  const handleSubmitButton = () => {
+    setErrortext("");
+    if (!userName) return alert("Please fill Name");
+    if (!userEmail) return alert("Please fill Email");
+    if (!userPassword) return alert("Please fill Address");
+
+    auth()
+      .createUserWithEmailAndPassword(
+        userEmail,
+        userPassword
+      )
+      .then((user) => {
+        console.log(
+          "Registration Successful. Please Login to proceed"
+        );
+        console.log(user);
+        if (user) {
+          auth()
+            .currentUser.updateProfile({
+              displayName: userName,
+              photoURL:
+                "https://aboutreact.com/profile.png",
+            })
+            .then(navigation.navigate(navigationStrings.WELCOME))
+            .catch((error) => {
+              alert(error);
+              console.error(error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.code === "auth/email-already-in-use") {
+          setErrortext(
+            "That email address is already in use!"
+          );
+        } else {
+          setErrortext(error.message);
+        }
+      });
+  };
+
   return (
     <KeyboardAwareScrollView>
       <SafeAreaView style={{flex: 1}}>
@@ -32,32 +79,42 @@ export default function SignUp({navigation}) {
           <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
             <TextInput
               placeholder="Full Name"
+              onChangeText={(userName) => setUserName(userName)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <TextInput
               placeholder="Email address"
+              onChangeText={(userEmail) => setUserEmail(userEmail)}
+              keyboardType='email-address'
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <TextInput
               placeholder="Password"
+              value={userPassword}
+              onChangeText={(userPassword) => setUserPassword(userPassword)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <TextInput
               placeholder="Confirm Password"
+              value={confPass}
+              onChangeText={(confPass) => setConfPass(confPass)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-            <Text
-            style={styles.forgetTxt}
-            onPress={() =>
-              navigation.navigate(navigationStrings.FORGOTPASSWORD)
-            }>
-            By signing up you’ve agree to <Text style={styles.services}>Our Terms of 
-            Use And Privacy Notice</Text>
-          </Text>
+
           </View>
+          <Text
+          style={styles.forgetTxt}
+          onPress={() =>
+            navigation.navigate(navigationStrings.FORGOTPASSWORD)
+          }>
+          By signing up you’ve agree to{' '}
+          <Text style={styles.services}>
+            Our Terms of Use And Privacy Notice
+          </Text>
+        </Text>
           <TouchableOpacity
             style={styles.signUpbtnDir}
-            onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
+            onPress={handleSubmitButton}>
             <Text style={styles.SignUpBtnTxt}>Sign Up</Text>
           </TouchableOpacity>
           <Text style={styles.AlAcc}>
@@ -90,6 +147,9 @@ const styles = StyleSheet.create({
     height: hp('100%'),
     // padding:16
   },
+  textDanger: {
+    color: "#dc3545"
+},
   circle: {
     width: wp('25%'),
     height: hp('13%'),
@@ -103,7 +163,7 @@ const styles = StyleSheet.create({
     borderColor: '#F0F0F0',
   },
   inputStyle: {
-    marginVertical: hp('23'),
+    marginVertical: hp('14'),
     position: 'absolute',
   },
   logoPos: {
@@ -134,21 +194,20 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   forgetTxt: {
-    marginVertical: hp('35.5%'),
-    right:wp('1'),
-justifyContent:'center',
-alignItems:'center',
-alignContent:'center',
-    width:wp('75%'),
+    marginVertical: hp('53.5%'),
+    // right: wp(''),
+    justifyContent: 'center',
+    alignSelf:'center',
+    alignContent: 'center',
+    width: wp('75%'),
     fontWeight: 'bold',
     position: 'absolute',
-    // color: 'black',
   },
-  services:{
-    color:'black'
+  services: {
+    color: 'black',
   },
   welcome: {
-    marginVertical: hp('13%'),
+    marginVertical: hp('3%'),
     fontSize: 25,
     fontWeight: 'bold',
     color: 'black',
@@ -170,8 +229,8 @@ alignContent:'center',
     fontWeight: '900',
     color: 'black',
   },
-  Ca:{
-    marginVertical:hp('20%'),
-    position:'absolute'
-  }
+  Ca: {
+    marginVertical: hp('8%'),
+    position: 'absolute',
+  },
 });

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "953200599505",
+    "firebase_url": "https://firelogin-1cc9d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "firelogin-1cc9d",
+    "storage_bucket": "firelogin-1cc9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953200599505:android:d6bd5f09d8c3054d0080f0",
+        "android_client_info": {
+          "package_name": "com.firelogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953200599505-qus3aeelfe3ig7k5of5o4ku5to3sjhvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBME2xNDmYC5J368IFicOoZVT3v4hQDoT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953200599505-qus3aeelfe3ig7k5of5o4ku5to3sjhvi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
