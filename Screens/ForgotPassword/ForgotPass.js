@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,38 +20,57 @@ import {
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import { Fb, Google, LinkedIn } from '../../Components/Assets/Reg Comps/LogoBtn';
+import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import Back from '../../Components/Assets/BackArrow/Back';
-
+import auth from '@react-native-firebase/auth';
 export default function ForgotPass({navigation}) {
- 
+  const [userEmail, setUserEmail] = useState('');
+  const [errortext, setErrortext] = useState('');
+
+  const sendEmail = () => {
+    setErrortext('');
+    if (!userEmail) {
+      alert('Please fill the Email');
+      return;
+    }
+    auth()
+      .sendPasswordResetEmail(userEmail)
+      .then(() =>{
+        navigation.navigate(navigationStrings.LOGIN)
+        alert('Reset email sent successfully!')
+      })
+      .catch(error => {
+        consdole.log(error);
+        if (error.code === 'auth/invalid-email') setErrortext(error.message);
+        else {
+          setErrortext('Please check you email');
+        }
+      })
+  };
   return (
-    <KeyboardAwareScrollView >
-    <SafeAreaView style={{flex: 1}}>
-    
-      <View style={styles.container}>
-        <Back />
-        <View style={styles.gif}>
-          <Addgif />
+    <KeyboardAwareScrollView>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          <Back />
+          <View style={styles.gif}>
+            <Addgif />
+          </View>
+          <Text style={styles.welcome}>Reset Password</Text>
+          <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
+            <TextInput
+              placeholder="Email address"
+              onChangeText={userEmail => setUserEmail(userEmail)}
+              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+            />
+            <Text style={styles.forgetTxt}>
+              Kindly entery your email to get a reset email.
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.signUpbtnDir} onPress={sendEmail}>
+            <Text style={styles.SignUpBtnTxt}>Send</Text>
+          </TouchableOpacity>
         </View>
-        <Text style={styles.welcome}>Reset Password</Text>
-        <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
-          <TextInput
-            placeholder="Email address"
-            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-          />
-          <Text
-            style={styles.forgetTxt}>
-            Kindly entery your email to get a reset email.
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.signUpbtnDir}
-          onPress={() => Alert.alert('Successfully sent') }>
-          <Text style={styles.SignUpBtnTxt}>Send</Text>
-        </TouchableOpacity>     
-        </View>
-    </SafeAreaView>
+      </SafeAreaView>
     </KeyboardAwareScrollView>
   );
 }
@@ -62,7 +81,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     // width: wp('100%'),
-    height:hp('100%')
+    height: hp('100%'),
     // padding:16
   },
   circle: {
@@ -110,7 +129,7 @@ const styles = StyleSheet.create({
   },
   forgetTxt: {
     marginVertical: hp('8.5%'),
-    alignSelf:'center',
+    alignSelf: 'center',
     fontWeight: 'bold',
     position: 'absolute',
     color: 'black',
@@ -129,12 +148,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     position: 'absolute',
   },
-  AlAcc:{
+  AlAcc: {
     marginVertical: hp('74%'),
     color: 'black',
     position: 'absolute',
   },
-  login:{
-    fontWeight: '900', color: 'black'
-  }
+  login: {
+    fontWeight: '900',
+    color: 'black',
+  },
 });
