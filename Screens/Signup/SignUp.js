@@ -11,8 +11,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
-import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   widthPercentageToDP as wp,
@@ -21,7 +19,11 @@ import {
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
+
 import auth from '@react-native-firebase/auth';
+
+import { Fb, Google, LinkedIn } from './LogoBtn';
+
 
 export default function SignUp({navigation}) {
   const [userName, setUserName] = useState('');
@@ -103,6 +105,8 @@ export default function SignUp({navigation}) {
             <Text style={styles.services}>
               Our Terms of Use And Privacy Notice
             </Text>
+
+          
           </Text>
           <TouchableOpacity
             style={styles.signUpbtnDir}
