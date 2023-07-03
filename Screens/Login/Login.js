@@ -7,10 +7,11 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,108 +20,57 @@ import {
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import {Fb, Google, GoogleSignIn, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
-import auth from "@react-native-firebase/auth";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Fb, Google, LinkedIn } from '../../Components/Assets/Reg Comps/LogoBtn';
 
 export default function SignUp({navigation}) {
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [errortext, setErrortext] = useState("");
-  const loginUser = async (email, password) =>{
-    setErrortext("");
-    if (!userEmail) {
-      alert("Please fill Email");
-      return;
-    }
-    if (!userPassword) {
-      alert("Please fill Password");
-      return;
-    }
-    auth()
-      .signInWithEmailAndPassword(userEmail, userPassword)
-      .then((user) => {
-        console.log(user);
-        // If server response message same as Data Matched
-        if (user) navigation.navigate(navigationStrings.WELCOME);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.code === "auth/invalid-email")
-          setErrortext(error.message);
-        else if (error.code === "auth/user-not-found")
-          setErrortext("No User Found");
-        else {
-          setErrortext(
-            "Please check your email id or password"
-          );
-        }
-      });
-  }
+ 
   return (
-    <KeyboardAwareScrollView>
-      <SafeAreaView style={{flex: 1}}>
-        <View style={styles.container}>
-          <View style={styles.gif}>
-            <Addgif />
-          </View>
-          <Text style={styles.welcome}>Welcome Back</Text>
-          <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
-            <TextInput
-              placeholder="Email address"
-              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              onChangeText={(userEmail) => setUserEmail(userEmail)}
-              autoCapitalize='none'
-              autoCorrect={false}
-            />
-            <TextInput
-              placeholder="Password"
-              style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              onChangeText={(userPassword) => setUserPassword(userPassword)}
-              autoCapitalize='none'
-              autoCorrect={false}
-              secureTextEntry={true}
-            />
-            <Text
-              style={styles.forgetTxt}
-              onPress={() =>
-                navigation.navigate(navigationStrings.FORGOTPASSWORD)
-              }>
-              Forget password?
-            </Text>
-          </View>
-         <View>
-         {errortext != "" ? (
-          <Text style={styles.errorTextStyle}>
-            {" "}
-            {errortext}{" "}
-          </Text>
-        ) : null}
-         </View>
+    <KeyboardAwareScrollView >
+    <SafeAreaView style={{flex: 1}}>
+      <View style={styles.container}>
 
-          <TouchableOpacity
-            style={styles.signUpbtnDir}
-            onPress={loginUser}>
-            <Text style={styles.SignUpBtnTxt}>Login</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.AlAcc}>
-            Don't have an account?{' '}
-            <Text
-              onPress={() => navigation.navigate(navigationStrings.SIGNUP)}
-              style={styles.login}>
-              Register
-            </Text>
+        <View style={styles.gif}>
+          <Addgif />
+        </View>
+        <Text style={styles.welcome}>Welcome Back</Text>
+        <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
+          <TextInput
+            placeholder="Email address"
+            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+          />
+          <TextInput
+            placeholder="Password"
+            style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
+          />
+          <Text
+            style={styles.forgetTxt}
+            onPress={() =>navigation.navigate(navigationStrings.FORGOTPASSWORD)}>
+            Forget password?
           </Text>
-          <View style={styles.logoPos} />
-          {/* logo desiginin part */}
-          <View style={styles.logoDirection}>
-            <Fb />
-            <Google />
-            <LinkedIn />
+        </View>
+        <TouchableOpacity
+          style={styles.signUpbtnDir}
+          onPress={() =>  navigation.navigate(navigationStrings.LOGIN)}>
+          <Text style={styles.SignUpBtnTxt}>Login</Text>
+        </TouchableOpacity>
+        <Text
+          style={styles.AlAcc}>
+          Don't have an account?{' '}
+          <Text
+            onPress={() => navigation.navigate(navigationStrings.SIGNUP)}
+            style={styles.login}>
+            Register
+          </Text>
+        </Text>
+        <View style={styles.logoPos} />
+        {/* logo desiginin part */}
+        <View style={styles.logoDirection}>
+          <Fb />
+          <Google />
+          <LinkedIn />
           </View>
         </View>
-      </SafeAreaView>
+    </SafeAreaView>
     </KeyboardAwareScrollView>
   );
 }
@@ -131,13 +81,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     // width: wp('100%'),
-    height: hp('100%'),
+    height:hp('100%')
     // padding:16
-  },
-  errorTextStyle: {
-    color: "red",
-    textAlign: "center",
-    fontSize: 14,
   },
   circle: {
     width: wp('25%'),
@@ -203,13 +148,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     position: 'absolute',
   },
-  AlAcc: {
+  AlAcc:{
     marginVertical: hp('74%'),
     color: 'black',
     position: 'absolute',
   },
-  login: {
-    fontWeight: '900',
-    color: 'black',
-  },
+  login:{
+    fontWeight: '900', color: 'black'
+  }
 });
