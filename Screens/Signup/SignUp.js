@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
+import Addgif from '../../Components/Assets/Reg Comps/Addgif';
 import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -20,50 +21,42 @@ import {
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
-import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth';
 
 export default function SignUp({navigation}) {
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [errortext, setErrortext] = useState("");
-  const [confPass, setConfPass] = useState('')
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [errortext, setErrortext] = useState('');
+  const [userPassword, setUserPassword] = useState(true);
+  const [confPass, setConfPass] = useState(true);
   const handleSubmitButton = () => {
-    setErrortext("");
-    if (!userName) return alert("Please fill Name");
-    if (!userEmail) return alert("Please fill Email");
-    if (!userPassword) return alert("Please fill Address");
+    setErrortext('');
+    if (!userName) return alert('Please fill Name');
+    if (!userEmail) return alert('Please fill Email');
+    if (!userPassword) return alert('Please fill Address');
 
     auth()
-      .createUserWithEmailAndPassword(
-        userEmail,
-        userPassword
-      )
-      .then((user) => {
-        console.log(
-          "Registration Successful. Please Login to proceed"
-        );
+      .createUserWithEmailAndPassword(userEmail, userPassword)
+      .then(user => {
+        console.log('Registration Successful. Please Login to proceed');
         console.log(user);
         if (user) {
           auth()
             .currentUser.updateProfile({
               displayName: userName,
-              photoURL:
-                "https://aboutreact.com/profile.png",
+              photoURL: 'https://aboutreact.com/profile.png',
             })
             .then(navigation.navigate(navigationStrings.WELCOME))
-            .catch((error) => {
+            .catch(error => {
               alert(error);
               console.error(error);
             });
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
-        if (error.code === "auth/email-already-in-use") {
-          setErrortext(
-            "That email address is already in use!"
-          );
+        if (error.code === 'auth/email-already-in-use') {
+          setErrortext('That email address is already in use!');
         } else {
           setErrortext(error.message);
         }
@@ -79,39 +72,38 @@ export default function SignUp({navigation}) {
           <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
             <TextInput
               placeholder="Full Name"
-              onChangeText={(userName) => setUserName(userName)}
+              onChangeText={userName => setUserName(userName)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <TextInput
               placeholder="Email address"
-              onChangeText={(userEmail) => setUserEmail(userEmail)}
-              keyboardType='email-address'
+              onChangeText={userEmail => setUserEmail(userEmail)}
+              keyboardType="email-address"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <TextInput
               placeholder="Password"
               value={userPassword}
-              onChangeText={(userPassword) => setUserPassword(userPassword)}
+              onChangeText={userPassword => setUserPassword(userPassword)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
             <TextInput
               placeholder="Confirm Password"
               value={confPass}
-              onChangeText={(confPass) => setConfPass(confPass)}
+              onChangeText={confPass => setConfPass(confPass)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-
           </View>
           <Text
-          style={styles.forgetTxt}
-          onPress={() =>
-            navigation.navigate(navigationStrings.FORGOTPASSWORD)
-          }>
-          By signing up you’ve agree to{' '}
-          <Text style={styles.services}>
-            Our Terms of Use And Privacy Notice
+            style={styles.forgetTxt}
+            onPress={() =>
+              navigation.navigate(navigationStrings.FORGOTPASSWORD)
+            }>
+            By signing up you’ve agree to{' '}
+            <Text style={styles.services}>
+              Our Terms of Use And Privacy Notice
+            </Text>
           </Text>
-        </Text>
           <TouchableOpacity
             style={styles.signUpbtnDir}
             onPress={handleSubmitButton}>
@@ -148,8 +140,8 @@ const styles = StyleSheet.create({
     // padding:16
   },
   textDanger: {
-    color: "#dc3545"
-},
+    color: '#dc3545',
+  },
   circle: {
     width: wp('25%'),
     height: hp('13%'),
@@ -197,7 +189,7 @@ const styles = StyleSheet.create({
     marginVertical: hp('53.5%'),
     // right: wp(''),
     justifyContent: 'center',
-    alignSelf:'center',
+    alignSelf: 'center',
     alignContent: 'center',
     width: wp('75%'),
     fontWeight: 'bold',
