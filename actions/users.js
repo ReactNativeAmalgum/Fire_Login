@@ -39,59 +39,139 @@ export const USER_CHATS_STATE_CHANGE = 'USER_CHATS_STATE_CHANGE';
 
 // creating users fields in descending order
 // here user is variable that stores the property of users
-export const signup = () => {
-  // condition for empty fields
 
-  return async (dispatch, getState) => {
-    try {
-    //   const {userEmail, userName} = getState().user;
-      const [userName, setUserName] = React.useState('')
-      const [userEmail, setUserEmail] = React.useState("");
-      const [errorText, setErrortext] = React.useState('');
-      const response = await auth().createUserWithEmailAndPassword(
-        userName,
-        userEmail,
-      );
-
-      const sendVerification = auth().currentUser.sendEmailVerification();
-      if (response.user.uid) {
-        const user = {
-          uid: response.user.uid,
-          username: userName,
-          email: userEmail,
-          posts: [],
-          bio: '',
-          likes: 0,
-          photo: photo,
-          savedPosts: [],
-          followers: [],
-          following: [],
-        };
-        await db.collection('users').doc(response.user.uid).set(user);
-        dispatch({type: 'LOGIN', payload: user});
-        alert('You are signed in!');
-        return sendVerification
-          .then(navigation.navigate(navigationStrings.WELCOME))
-          .catch(error => {
-            alert(error);
-            console.error(error);
-          })
-          .catch(error => {
-            console.log(error);
-            if (error.code === 'auth/email-already-in-use') {
-              setErrortext('That email address is already in use!');
-            } else if (error.code === 'auth/weak-password') {
-              setErrortext('The given password is invalid');
-            } else {
-              setErrortext(error.message);
-            }
-          });
-      }
-    } catch (e) {
-      alert(e);
-    }
-  };
+export const signUp = () => {
+  const res = auth().createUserWithEmailAndPassword(
+    userName,
+    userEmail,
+    userPassword,
+  );
+  if (res.user.uid) {
+    const user = {
+      uid: res.user.uid,
+      displayName: userName,
+      email: userEmail,
+    };
+  }
+  firestore()
+    .collection('Users')
+    .doc(res.user.uid)
+    .set({
+      // name: userName,
+      email: userEmail,
+      displayName: userName,
+    })
+    .then(navigation.navigate(navigationStrings.WELCOME));
 };
+
+// export const signUp = async () => {
+//   // condition for empty fields
+//   setErrortext('');
+//   if (
+//     !(
+//       userName.length &&
+//       userEmail.length &&
+//       userPassword.length &&
+//       userPassword.length &&
+//       confPass.length
+//     )
+//   ) {
+//     setNameErr(true);
+//     setEmailErr(true);
+//     setPasswordErr(true);
+//     setCpasswordErr(true);
+//     setEmailErrText('Enter your Email');
+//     setNameErrText('Enter your Username');
+//     setPasswordErrText('Enter your userPassword');
+//     setCpasswordErrText('Enter your userPassword again');
+//     return;
+//   }
+//   const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//   if (reg.test(userEmail) === false) {
+//     setNameErr(false);
+//     setPasswordErr(false);
+//     setCpasswordErr(false);
+//     setEmailErr(true);
+//     setEmailErrText('Enter Valid Email');
+//     return;
+//   }
+
+//   if (userPassword !== confPass) {
+//     setNameErr(false);
+//     setEmailErr(false);
+//     setPasswordErr(false);
+//     setCpasswordErr(true);
+//     setCpasswordErrText('Password does not match');
+//     return;
+//   }
+
+//   setNameErr(false);
+//   setEmailErr(false);
+//   setPasswordErr(false);
+//   setCpasswordErr(false);
+
+//   firestore()
+//   .collection('Users')
+//   .doc('101')
+//   .set({
+//     // name: userName,
+//     email: userEmail,
+//     displayName: userName,
+//   })
+//   .then(navigation.navigate(navigationStrings.WELCOME))
+// };
+
+// export const signup = async () => {
+//   // condition for empty fields
+
+//   const [userName, setUserName] = useState('');
+//   const [userEmail, setUserEmail] = useState('');
+//   const [userPassword, setUserPassword] = useState('');
+//     try {
+
+//       const response = await auth().createUserWithEmailAndPassword(
+//         userName,
+//         userEmail,
+//         userPassword
+//       );
+
+//       const sendVerification = auth().currentUser.sendEmailVerification();
+//       if (response.user.uid) {
+//         const user = {
+//           uid: response.user.uid,
+//           username: userName,
+//           email: userEmail,
+//           posts: [],
+//           bio: '',
+//           likes: 0,
+//           photo: photo,
+//           savedPosts: [],
+//           followers: [],
+//           following: [],
+//         };
+//         await db.collection('users').doc(response.user.uid).set(user);
+//         alert('You are signed in!');
+//         return sendVerification
+//           .then(navigation.navigate(navigationStrings.WELCOME))
+//           .catch(error => {
+//             alert(error);
+//             console.error(error);
+//           })
+//           .catch(error => {
+//             console.log(error);
+//             if (error.code === 'auth/email-already-in-use') {
+//               setErrortext('That email address is already in use!');
+//             } else if (error.code === 'auth/weak-password') {
+//               setErrortext('The given password is invalid');
+//             } else {
+//               setErrortext(error.message);
+//             }
+//           });
+//       }
+//     } catch (e) {
+//       alert(e);
+//     }
+//   };
 
 // // login function
 // export const login = () => {

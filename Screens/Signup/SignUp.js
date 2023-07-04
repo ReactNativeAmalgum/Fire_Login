@@ -22,6 +22,9 @@ import navigationStrings from '../../Components/Navigation/NavigationStrings/nav
 
 import auth from '@react-native-firebase/auth';
 import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
+import firestore from '@react-native-firebase/firestore';
+import db from '../../src/config/firebase';
+import {signUp, signup} from '../../actions/users';
 
 export default function SignUp({navigation}) {
   // states for storing details of users
@@ -29,8 +32,6 @@ export default function SignUp({navigation}) {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [confPass, setConfPass] = useState('');
-  const [showPassword, setShowPassword] = useState(true);
-  const [showCpassword, setShowCpassword] = useState(true);
 
   // states for errors
   const [nameErr, setNameErr] = useState(false);
@@ -38,29 +39,31 @@ export default function SignUp({navigation}) {
   const [passwordErr, setPasswordErr] = useState(false);
   const [cpasswordErr, setCpasswordErr] = useState(false);
 
+
   const [nameErrText, setNameErrText] = useState('');
   const [emailErrText, setEmailErrText] = useState('');
   const [passwordErrText, setPasswordErrText] = useState('');
   const [cpasswordErrText, setCpasswordErrText] = useState('');
   const [errorText, setErrortext] = useState('');
 
-  const onShowCPassword = () => {
-    setShowCpassword(!showCpassword);
-  };
-
-  const onShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   // signup button
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     // condition for empty fields
     setErrortext('');
-    if (!(userName.length && userPassword.length && userPassword.length && confPass.length)) {
+    if (!
+      (
+        userName.length &&
+        userEmail.length &&
+        userPassword &&
+        userPassword&&
+        confPass
+      ) 
+    )  {
       setNameErr(true);
       setEmailErr(true);
       setPasswordErr(true);
       setCpasswordErr(true);
+      setError(true);
       setEmailErrText('Enter your Email');
       setNameErrText('Enter your Username');
       setPasswordErrText('Enter your userPassword');
@@ -73,6 +76,7 @@ export default function SignUp({navigation}) {
       setPasswordErr(false);
       setCpasswordErr(false);
       setEmailErr(true);
+      // setError(true);
       setEmailErrText('Enter Valid Email');
       return;
     }
@@ -91,35 +95,32 @@ export default function SignUp({navigation}) {
     setPasswordErr(false);
     setCpasswordErr(false);
 
-    auth()
-      .createUserWithEmailAndPassword(userEmail, userPassword)
-      .then(user => {
-        console.log('Registration Successful. Please Login to proceed');
-        console.log(user);
-        if (user) {
-          auth()
-            .currentUser.updateProfile({
-              displayName: userName,
-              photoURL: 'https://aboutreact.com/profile.png',
-            })
-            .then(navigation.navigate(navigationStrings.WELCOME))
-            .catch(error => {
-              alert(error);
-              console.error(error);
-            });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        if (error.code === 'auth/email-already-in-use') {
-          setErrortext('That email address is already in use!');
-        }else if(error.code === 'auth/weak-password') {
-          passwordErr('The given password is invalid')          
-        }
-         else {
-          setErrortext(error.message);
-        }
-      });
+    try {
+      const res = auth().createUserWithEmailAndPassword(
+        userEmail,
+        userPassword,
+        userName,
+      );
+      const user = {
+        diaplayName: userName,
+        email: userEmail,
+        uid: auth().currentUser?.uid,
+      };
+      await firestore().collection('users').doc(res.user).set(user);
+      navigation.navigate(navigationStrings.WELCOME);
+      console.log(user);
+      
+    }catch (error) {
+      console.log(error);
+      if (error.code === 'auth/email-already-in-use') {
+        setErrortext('That email address is already in use!');
+      }else if(error.code === 'auth/weak-password') {
+        passwordErr('The given password is invalid')          
+      }
+       else {
+        setErrortext('That email address is already in use!');
+      }
+    }
   };
 
   return (
@@ -134,23 +135,27 @@ export default function SignUp({navigation}) {
               onChangeText={userName => setUserName(userName)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-            {nameErr !="" ? <Text style={styles.errText}>{nameErrText}</Text> : null}
+            {nameErr != '' ? (
+              <Text style={styles.errText}>{nameErrText}</Text>
+            ) : null}
             <TextInput
               placeholder="Email address"
+              autoCorrect={false}
+              autoCapitalize="none"
               onChangeText={userEmail => setUserEmail(userEmail)}
               keyboardType={'email-address'}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-            {emailErr !="" ? (
-              <Text style={styles.errText}>{emailErrText}</Text>
-            ) : null}
+            {emailErr != '' 
+              ? <Text style={styles.errText}>{emailErrText}  </Text>
+              :  null}
             <TextInput
               placeholder="Password"
               value={userPassword}
               onChangeText={userPassword => setUserPassword(userPassword)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-            {passwordErr !="" ? (
+            {passwordErr != '' ? (
               <Text style={styles.errText}>{passwordErrText}</Text>
             ) : null}
 
@@ -160,8 +165,8 @@ export default function SignUp({navigation}) {
               onChangeText={confPass => setConfPass(confPass)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-            {cpasswordErr !="" ? (
-              <Text style={styles.errText}>{cpasswordErrText}{}</Text>
+            {cpasswordErr != '' ? (
+              <Text style={styles.errText}>{cpasswordErrText}</Text>
             ) : null}
           </View>
           <Text style={styles.forgetTxt}>

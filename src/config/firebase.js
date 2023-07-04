@@ -25,6 +25,8 @@ const analytics = getAnalytics(app);
 GoogleSignin.configure({
   webClientId:'953200599505-qus3aeelfe3ig7k5of5o4ku5to3sjhvi.apps.googleusercontent.com',
 });
-const db = firebase.firestore()
-export default db;
+
 // export const Go = GoogleSignin()
+
+const db = firestore()
+export default db;
