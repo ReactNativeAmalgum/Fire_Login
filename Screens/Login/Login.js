@@ -41,7 +41,7 @@ export default function Login({navigation}) {
 
   const loginUser = async () => {
     setErrortext('');
-    if (!(email.length && password.length)) {
+    if (!(email && userPassword)) {
       setEmailErr(true);
       setPasswordErr(true);
       setEmailErrText('Enter your email');
