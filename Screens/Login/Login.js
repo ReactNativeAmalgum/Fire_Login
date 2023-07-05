@@ -19,9 +19,9 @@ import {
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
+import {Fb, Google, GoogleSignIn, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import auth from "@react-native-firebase/auth";
-
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export default function SignUp({navigation}) {
   const [userEmail, setUserEmail] = useState("");
