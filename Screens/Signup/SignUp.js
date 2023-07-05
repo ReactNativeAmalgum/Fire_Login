@@ -2,14 +2,12 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TextInput,
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
-  Alert,
+  Keyboard
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -23,8 +21,6 @@ import navigationStrings from '../../Components/Navigation/NavigationStrings/nav
 import auth from '@react-native-firebase/auth';
 import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import firestore from '@react-native-firebase/firestore';
-import db from '../../src/config/firebase';
-import {signUp, signup} from '../../actions/users';
 
 export default function SignUp({navigation}) {
   // states for storing details of users
@@ -38,7 +34,7 @@ export default function SignUp({navigation}) {
   const [emailErr, setEmailErr] = useState(false);
   const [passwordErr, setPasswordErr] = useState(false);
   const [cpasswordErr, setCpasswordErr] = useState(false);
-
+  const [error, setError] = useState(false);
 
   const [nameErrText, setNameErrText] = useState('');
   const [emailErrText, setEmailErrText] = useState('');
@@ -46,19 +42,17 @@ export default function SignUp({navigation}) {
   const [cpasswordErrText, setCpasswordErrText] = useState('');
   const [errorText, setErrortext] = useState('');
 
+  const nameInputRef = createRef();
+  const emailInputRef = createRef();
+  const passwordInputRef = createRef();
+
   // signup button
   const handleSubmitButton = async () => {
     // condition for empty fields
     setErrortext('');
-    if (!
-      (
-        userName.length &&
-        userEmail.length &&
-        userPassword &&
-        userPassword&&
-        confPass
-      ) 
-    )  {
+    if (
+      (userName && userEmail && userPassword && userPassword && confPass) == ''
+    ) {
       setNameErr(true);
       setEmailErr(true);
       setPasswordErr(true);
@@ -66,8 +60,9 @@ export default function SignUp({navigation}) {
       setError(true);
       setEmailErrText('Enter your Email');
       setNameErrText('Enter your Username');
-      setPasswordErrText('Enter your userPassword');
-      setCpasswordErrText('Enter your userPassword again');
+      setPasswordErrText('Enter your Password');
+      setCpasswordErrText('Enter your password again');
+      // setErrortext('**************');
       return;
     }
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -76,7 +71,8 @@ export default function SignUp({navigation}) {
       setPasswordErr(false);
       setCpasswordErr(false);
       setEmailErr(true);
-      // setError(true);
+      setError(true);
+      setErrortext('That email address is already in use!');
       setEmailErrText('Enter Valid Email');
       return;
     }
@@ -86,15 +82,15 @@ export default function SignUp({navigation}) {
       setEmailErr(false);
       setPasswordErr(false);
       setCpasswordErr(true);
+      setError(false);
       setCpasswordErrText('Password does not match');
       return;
     }
-
     setNameErr(false);
     setEmailErr(false);
     setPasswordErr(false);
     setCpasswordErr(false);
-
+    setError(false);
     try {
       const res = auth().createUserWithEmailAndPassword(
         userEmail,
@@ -109,16 +105,14 @@ export default function SignUp({navigation}) {
       await firestore().collection('users').doc(res.user).set(user);
       navigation.navigate(navigationStrings.WELCOME);
       console.log(user);
-      
-    }catch (error) {
+    } catch (error) {
       console.log(error);
       if (error.code === 'auth/email-already-in-use') {
         setErrortext('That email address is already in use!');
-      }else if(error.code === 'auth/weak-password') {
-        passwordErr('The given password is invalid')          
-      }
-       else {
-        setErrortext('That email address is already in use!');
+      } else if (error.code === 'auth/weak-password') {
+        passwordErr('The given password is invalid');
+      } else {
+        setErrortext(error.message);
       }
     }
   };
@@ -131,7 +125,13 @@ export default function SignUp({navigation}) {
           <Text style={styles.Ca}>Create your new account</Text>
           <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
             <TextInput
-              placeholder="Full Name"
+              placeholder="Username"
+              returnKeyType="next"
+              ref={nameInputRef}
+              onSubmitEditing={() => {
+                nameInputRef.current && nameInputRef.current.focus();
+              }}
+              blurOnSubmit={false}
               onChangeText={userName => setUserName(userName)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
@@ -142,16 +142,29 @@ export default function SignUp({navigation}) {
               placeholder="Email address"
               autoCorrect={false}
               autoCapitalize="none"
+              returnKeyType="next"
+              ref={emailInputRef}
+              onSubmitEditing={() => {
+                emailInputRef.current && emailInputRef.current.focus();
+              }}
+              blurOnSubmit={false}
               onChangeText={userEmail => setUserEmail(userEmail)}
               keyboardType={'email-address'}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
-            {emailErr != '' 
-              ? <Text style={styles.errText}>{emailErrText}  </Text>
-              :  null}
+            {emailErr != '' ? (
+              <Text style={styles.errText}>{emailErrText}</Text>
+            ) : null}
+
             <TextInput
               placeholder="Password"
               value={userPassword}
+              ref={passwordInputRef}
+              returnKeyType="next"
+              onSubmitEditing={() =>
+                passwordInputRef.current && passwordInputRef.current.focus()
+              }
+              blurOnSubmit={false}
               onChangeText={userPassword => setUserPassword(userPassword)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
@@ -162,6 +175,10 @@ export default function SignUp({navigation}) {
             <TextInput
               placeholder="Confirm Password"
               value={confPass}
+              ref={passwordInputRef}
+              returnKeyType="next"
+              onSubmitEditing={Keyboard.dismiss}
+              blurOnSubmit={false}
               onChangeText={confPass => setConfPass(confPass)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
@@ -230,6 +247,12 @@ const styles = StyleSheet.create({
     marginVertical: hp('14'),
     position: 'absolute',
   },
+  // alertErr:{
+  //   color: 'red',
+  //   fontSize: 12,
+  //   marginTop:-10,
+  //   marginLeft: 10,
+  // },
   errText: {
     color: 'red',
     fontSize: 12,
