@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Keyboard,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
@@ -70,8 +69,7 @@ export default function Login({navigation}) {
         })
         .catch(error => {
           console.log(error);
-          if (error.code === 'auth/invalid-email')
-            return setErrortext('Invalide email');
+          if (error.code === 'auth/invalid-email') return setErrortext("Invalide email")
           else if (error.code === 'auth/user-not-found')
             setErrortext('No User Found');
           else {
@@ -79,7 +77,7 @@ export default function Login({navigation}) {
           }
         });
     } catch (error) {
-      setErrortext(error.message);
+      setErrortext(error.message)
     }
   };
   return (
@@ -94,19 +92,16 @@ export default function Login({navigation}) {
             <TextInput
               placeholder="Email address"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              returnKeyType='next'
               onChangeText={userEmail => setEmail(userEmail)}
               autoCapitalize="none"
               autoCorrect={false}
             />
-            {emailErr != ' ' ? (
+            {emailErr !=" " ? (
               <Text style={styles.errText}>{emailErrText}</Text>
             ) : null}
             <TextInput
               placeholder="Password"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              returnKeyType='next'
-              onSubmitEditing={Keyboard.dismiss}
               onChangeText={userPassword => setUserPassword(userPassword)}
               autoCapitalize="none"
               autoCorrect={false}
@@ -165,11 +160,9 @@ const styles = StyleSheet.create({
   },
   errorTextStyle: {
     color: 'red',
-    // textAlign: 'center',
-    alignSelf:'center',
-    position:'absolute',
+    textAlign: 'center',
     fontSize: 14,
-    marginVertical: hp('60%'),
+    marginVertical:hp('20%')
   },
   circle: {
     width: wp('25%'),
@@ -251,4 +244,5 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: 'black',
   },
+
 });
