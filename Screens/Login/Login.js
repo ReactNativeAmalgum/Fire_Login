@@ -19,44 +19,97 @@ import {
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import {Fb, Google, GoogleSignIn, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
-import auth from "@react-native-firebase/auth";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  Fb,
+  Google,
+  GoogleSignIn,
+  LinkedIn,
+  getCurrentUserInfo,
+  googleSign,
+} from '../../Components/Assets/Reg Comps/LogoBtn';
+import auth from '@react-native-firebase/auth';
+import {GoogleSignin, statusCodes} from '@react-native-google-signin/google-signin';
 
-export default function SignUp({navigation}) {
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [errortext, setErrortext] = useState("");
-  const loginUser = async (email, password) =>{
-    setErrortext("");
-    if (!userEmail) {
-      alert("Please fill Email");
+// GoogleSignin.configure({
+//   scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
+//   webClientId: '<FROM DEVELOPER CONSOLE>', // client ID of type WEB for your server (needed to verify user ID and offline access)
+//   offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+//   hostedDomain: '', // specifies a hosted domain restriction
+//   forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
+//   accountName: '', // [Android] specifies an account name on the device that should be used
+//   iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+//   googleServicePlistPath: '', // [iOS] if you renamed your GoogleService-Info file, new name here, e.g. GoogleService-Info-Staging
+//   openIdRealm: '', // [iOS] The OpenID2 realm of the home web server. This allows Google to include the user's OpenID Identifier in the OpenID Connect ID token.
+//   profileImageSize: 120, // [iOS] The desired height (and width) of the profile image. Defaults to 120px
+// });
+GoogleSignin.configure({
+  webClientId:'953200599505-qus3aeelfe3ig7k5of5o4ku5to3sjhvi.apps.googleusercontent.com',
+});
+export default function Login({navigation}) {
+  const [email, setEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+  const [errortext, setErrortext] = useState('');
+
+  const [emailErr, setEmailErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+
+  const [emailErrText, setEmailErrText] = useState('');
+  const [passwordErrText, setPasswordErrText] = useState('');
+  const [state, setState] = useState()
+  const [gettingLoginStatus,setGettingLoginStatus] = useState(true)
+
+  const loginUser = async () => {
+    setErrortext('');
+    if (!(email && userPassword)) {
+      setEmailErr(true);
+      setPasswordErr(true);
+      setEmailErrText('Enter your email');
+      setPasswordErrText('Enter your password');
       return;
     }
-    if (!userPassword) {
-      alert("Please fill Password");
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(email) === false) {
+      setPasswordErr(false);
+      setEmailErr(true);
+      setEmailErrText('Enter Valid Email');
       return;
     }
-    auth()
-      .signInWithEmailAndPassword(userEmail, userPassword)
-      .then((user) => {
-        console.log(user);
-        // If server response message same as Data Matched
-        if (user) navigation.navigate(navigationStrings.WELCOME);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.code === "auth/invalid-email")
-          setErrortext(error.message);
-        else if (error.code === "auth/user-not-found")
-          setErrortext("No User Found");
-        else {
-          setErrortext(
-            "Please check your email id or password"
-          );
-        }
-      });
-  }
+
+    setEmailErr(false);
+    setPasswordErr(false);
+
+    try {
+      auth()
+        .signInWithEmailAndPassword(email, userPassword)
+        .then(user => {
+          console.log(user);
+          // If server response message same as Data Matched
+          if (user) navigation.navigate(navigationStrings.WELCOME);
+        })
+        .catch(error => {
+          console.log(error);
+          if (error.code === 'auth/invalid-email') return setErrortext("Invalide email")
+          else if (error.code === 'auth/user-not-found')
+            setErrortext('No User Found');
+          else {
+            setErrortext('Please check your email id or password');
+          }
+        });
+    } catch (error) {
+      setErrortext(error.message)
+    }
+  };
+  const getCurrentUserInfo = async () => {
+    const isSignedIn = await GoogleSignin.isSignedIn();
+    if (isSignedIn) {
+      alert('User is already signed in');
+      // Set User Info if user is already signed in
+      _getCurrentUserInfo();
+    } else {
+      alert('Please Login');
+    }
+    setGettingLoginStatus(false);
+  };
   return (
     <KeyboardAwareScrollView>
       <SafeAreaView style={{flex: 1}}>
@@ -69,18 +122,24 @@ export default function SignUp({navigation}) {
             <TextInput
               placeholder="Email address"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              onChangeText={(userEmail) => setUserEmail(userEmail)}
-              autoCapitalize='none'
+              onChangeText={userEmail => setEmail(userEmail)}
+              autoCapitalize="none"
               autoCorrect={false}
             />
+            {emailErr !=" " ? (
+              <Text style={styles.errText}>{emailErrText}</Text>
+            ) : null}
             <TextInput
               placeholder="Password"
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
-              onChangeText={(userPassword) => setUserPassword(userPassword)}
-              autoCapitalize='none'
+              onChangeText={userPassword => setUserPassword(userPassword)}
+              autoCapitalize="none"
               autoCorrect={false}
               secureTextEntry={true}
             />
+            {passwordErr ? (
+              <Text style={styles.errText}>{passwordErrText}</Text>
+            ) : null}
             <Text
               style={styles.forgetTxt}
               onPress={() =>
@@ -89,18 +148,13 @@ export default function SignUp({navigation}) {
               Forget password?
             </Text>
           </View>
-         <View>
-         {errortext != "" ? (
-          <Text style={styles.errorTextStyle}>
-            {" "}
-            {errortext}{" "}
-          </Text>
-        ) : null}
-         </View>
+          <View>
+            {errortext != '' ? (
+              <Text style={styles.errorTextStyle}> {errortext} </Text>
+            ) : null}
+          </View>
 
-          <TouchableOpacity
-            style={styles.signUpbtnDir}
-            onPress={loginUser}>
+          <TouchableOpacity style={styles.signUpbtnDir} onPress={loginUser}>
             <Text style={styles.SignUpBtnTxt}>Login</Text>
           </TouchableOpacity>
 
@@ -116,7 +170,7 @@ export default function SignUp({navigation}) {
           {/* logo desiginin part */}
           <View style={styles.logoDirection}>
             <Fb />
-            <Google />
+            <Google onPress={getCurrentUserInfo}/>
             <LinkedIn />
           </View>
         </View>
@@ -135,9 +189,10 @@ const styles = StyleSheet.create({
     // padding:16
   },
   errorTextStyle: {
-    color: "red",
-    textAlign: "center",
+    color: 'red',
+    textAlign: 'center',
     fontSize: 14,
+    marginVertical:hp('20%')
   },
   circle: {
     width: wp('25%'),
@@ -148,11 +203,18 @@ const styles = StyleSheet.create({
   txtInput: {
     width: wp('75%'),
     backgroundColor: '#F0F0F0',
-    margin: 10,
+    margin: 5,
     borderColor: '#F0F0F0',
   },
+  errText: {
+    color: 'red',
+    fontSize: 12,
+    // fontFamily: fontFamily.regular,
+    // marginTop: 8,
+    marginLeft: 10,
+  },
   inputStyle: {
-    marginVertical: hp('40%'),
+    marginVertical: hp('35%'),
     position: 'absolute',
   },
   logoPos: {
@@ -183,7 +245,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   forgetTxt: {
-    marginVertical: hp('18%'),
+    marginVertical: hp('20%'),
     left: 200,
     fontWeight: 'bold',
     position: 'absolute',
@@ -212,4 +274,5 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: 'black',
   },
+
 });

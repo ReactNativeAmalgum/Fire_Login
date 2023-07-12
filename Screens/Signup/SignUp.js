@@ -209,7 +209,7 @@ export default function SignUp({navigation}) {
           {/* logo desiginin part */}
           <View style={styles.logoDirection}>
             <Fb />
-            <Google />
+            <Google onPress={signInWithGoogle} />
             <LinkedIn />
           </View>
         </View>
