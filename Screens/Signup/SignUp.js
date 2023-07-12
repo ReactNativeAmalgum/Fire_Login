@@ -2,17 +2,13 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TextInput,
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
-  Alert,
+  Keyboard
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 
-import Addgif from '../../Components/Assets/Reg Comps/Addgif';
-import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   widthPercentageToDP as wp,
@@ -21,47 +17,104 @@ import {
   removeOrientationListener as rol,
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
+
 import auth from '@react-native-firebase/auth';
-import { signInWithGoogle } from '../../src/config/firebase';
+import {Fb, Google, LinkedIn} from '../../Components/Assets/Reg Comps/LogoBtn';
+import firestore from '@react-native-firebase/firestore';
 
 export default function SignUp({navigation}) {
+  // states for storing details of users
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [errortext, setErrortext] = useState('');
-  const [userPassword, setUserPassword] = useState(true);
-  const [confPass, setConfPass] = useState(true);
-  const handleSubmitButton = () => {
-    setErrortext('');
-    if (!userName) return alert('Please fill Name');
-    if (!userEmail) return alert('Please fill Email');
-    if (!userPassword) return alert('Please fill Address');
+  const [userPassword, setUserPassword] = useState('');
+  const [confPass, setConfPass] = useState('');
 
-    auth()
-      .createUserWithEmailAndPassword(userEmail, userPassword)
-      .then(user => {
-        console.log('Registration Successful. Please Login to proceed');
-        console.log(user);
-        if (user) {
-          auth()
-            .currentUser.updateProfile({
-              displayName: userName,
-              photoURL: 'https://aboutreact.com/profile.png',
-            })
-            .then(navigation.navigate(navigationStrings.WELCOME))
-            .catch(error => {
-              alert(error);
-              console.error(error);
-            });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        if (error.code === 'auth/email-already-in-use') {
-          setErrortext('That email address is already in use!');
-        } else {
-          setErrortext(error.message);
-        }
-      });
+  // states for errors
+  const [nameErr, setNameErr] = useState(false);
+  const [emailErr, setEmailErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+  const [cpasswordErr, setCpasswordErr] = useState(false);
+  const [error, setError] = useState(false);
+
+  const [nameErrText, setNameErrText] = useState('');
+  const [emailErrText, setEmailErrText] = useState('');
+  const [passwordErrText, setPasswordErrText] = useState('');
+  const [cpasswordErrText, setCpasswordErrText] = useState('');
+  const [errorText, setErrortext] = useState('');
+
+  const nameInputRef = createRef();
+  const emailInputRef = createRef();
+  const passwordInputRef = createRef();
+
+  // signup button
+  const handleSubmitButton = async () => {
+    // condition for empty fields
+    setErrortext('');
+    if (
+      (userName && userEmail && userPassword && userPassword && confPass) == ''
+    ) {
+      setNameErr(true);
+      setEmailErr(true);
+      setPasswordErr(true);
+      setCpasswordErr(true);
+      setError(true);
+      setEmailErrText('Enter your Email');
+      setNameErrText('Enter your Username');
+      setPasswordErrText('Enter your Password');
+      setCpasswordErrText('Enter your password again');
+      // setErrortext('**************');
+      return;
+    }
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(userEmail) === false) {
+      setNameErr(false);
+      setPasswordErr(false);
+      setCpasswordErr(false);
+      setEmailErr(true);
+      setError(true);
+      setErrortext('That email address is already in use!');
+      setEmailErrText('Enter Valid Email');
+      return;
+    }
+
+    if (userPassword !== confPass) {
+      setNameErr(false);
+      setEmailErr(false);
+      setPasswordErr(false);
+      setCpasswordErr(true);
+      setError(false);
+      setCpasswordErrText('Password does not match');
+      return;
+    }
+    setNameErr(false);
+    setEmailErr(false);
+    setPasswordErr(false);
+    setCpasswordErr(false);
+    setError(false);
+    try {
+      const res = auth().createUserWithEmailAndPassword(
+        userEmail,
+        userPassword,
+        userName,
+      );
+      const user = {
+        diaplayName: userName,
+        email: userEmail,
+        uid: auth().currentUser?.uid,
+      };
+      await firestore().collection('users').doc(res.user).set(user);
+      navigation.navigate(navigationStrings.WELCOME);
+      console.log(user);
+    } catch (error) {
+      console.log(error);
+      if (error.code === 'auth/email-already-in-use') {
+        setErrortext('That email address is already in use!');
+      } else if (error.code === 'auth/weak-password') {
+        passwordErr('The given password is invalid');
+      } else {
+        setErrortext(error.message);
+      }
+    }
   };
 
   return (
@@ -72,34 +125,68 @@ export default function SignUp({navigation}) {
           <Text style={styles.Ca}>Create your new account</Text>
           <View style={[styles.inputStyle, {justifyContent: 'space-evenly'}]}>
             <TextInput
-              placeholder="Full Name"
+              placeholder="Username"
+              returnKeyType="next"
+              ref={nameInputRef}
+              onSubmitEditing={() => {
+                nameInputRef.current && nameInputRef.current.focus();
+              }}
+              blurOnSubmit={false}
               onChangeText={userName => setUserName(userName)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
+            {nameErr != '' ? (
+              <Text style={styles.errText}>{nameErrText}</Text>
+            ) : null}
             <TextInput
               placeholder="Email address"
+              autoCorrect={false}
+              autoCapitalize="none"
+              returnKeyType="next"
+              ref={emailInputRef}
+              onSubmitEditing={() => {
+                emailInputRef.current && emailInputRef.current.focus();
+              }}
+              blurOnSubmit={false}
               onChangeText={userEmail => setUserEmail(userEmail)}
-              keyboardType="email-address"
+              keyboardType={'email-address'}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
+            {emailErr != '' ? (
+              <Text style={styles.errText}>{emailErrText}</Text>
+            ) : null}
+
             <TextInput
               placeholder="Password"
               value={userPassword}
+              ref={passwordInputRef}
+              returnKeyType="next"
+              onSubmitEditing={() =>
+                passwordInputRef.current && passwordInputRef.current.focus()
+              }
+              blurOnSubmit={false}
               onChangeText={userPassword => setUserPassword(userPassword)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
+            {passwordErr != '' ? (
+              <Text style={styles.errText}>{passwordErrText}</Text>
+            ) : null}
+
             <TextInput
               placeholder="Confirm Password"
               value={confPass}
+              ref={passwordInputRef}
+              returnKeyType="next"
+              onSubmitEditing={Keyboard.dismiss}
+              blurOnSubmit={false}
               onChangeText={confPass => setConfPass(confPass)}
               style={[styles.txtInput, {borderWidth: 1, borderRadius: 10}]}
             />
+            {cpasswordErr != '' ? (
+              <Text style={styles.errText}>{cpasswordErrText}</Text>
+            ) : null}
           </View>
-          <Text
-            style={styles.forgetTxt}
-            onPress={() =>
-              navigation.navigate(navigationStrings.FORGOTPASSWORD)
-            }>
+          <Text style={styles.forgetTxt}>
             By signing up you’ve agree to{' '}
             <Text style={styles.services}>
               Our Terms of Use And Privacy Notice
@@ -152,12 +239,28 @@ const styles = StyleSheet.create({
   txtInput: {
     width: wp('75%'),
     backgroundColor: '#F0F0F0',
-    margin: 10,
+    padding: 10,
+    margin: 5,
     borderColor: '#F0F0F0',
   },
   inputStyle: {
     marginVertical: hp('14'),
     position: 'absolute',
+  },
+  // alertErr:{
+  //   color: 'red',
+  //   fontSize: 12,
+  //   marginTop:-10,
+  //   marginLeft: 10,
+  // },
+  errText: {
+    color: 'red',
+    fontSize: 12,
+
+    // fontFamily: fontFamily.regular,
+    top: 0.5,
+    // marginTop: 0.1,
+    marginLeft: 10,
   },
   logoPos: {
     borderWidth: 0.2,
@@ -187,7 +290,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   forgetTxt: {
-    marginVertical: hp('53.5%'),
+    marginVertical: hp('59.5%'),
     // right: wp(''),
     justifyContent: 'center',
     alignSelf: 'center',
