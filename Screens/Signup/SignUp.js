@@ -22,6 +22,7 @@ import {
 } from 'react-native-responsive-screen-hooks';
 import navigationStrings from '../../Components/Navigation/NavigationStrings/navigationStrings';
 import auth from '@react-native-firebase/auth';
+import { signInWithGoogle } from '../../src/config/firebase';
 
 export default function SignUp({navigation}) {
   const [userName, setUserName] = useState('');
@@ -121,7 +122,7 @@ export default function SignUp({navigation}) {
           {/* logo desiginin part */}
           <View style={styles.logoDirection}>
             <Fb />
-            <Google />
+            <Google onPress={signInWithGoogle} />
             <LinkedIn />
           </View>
         </View>
